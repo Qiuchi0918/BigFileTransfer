@@ -17,7 +17,7 @@ public class FilePacketClientHandler extends SimpleChannelInboundHandler<FilePac
 		System.out.println(new Date(System.currentTimeMillis()));
 
 		ctx.channel().attr(ChannelAttrUtil.outStream).set(new FileOutputStream("./client-receive-" + file.getName()));
-		ctx.channel().attr(ChannelAttrUtil.fileSize).set(file.length());
+		ctx.channel().attr(ChannelAttrUtil.fileSize).set(packet.getFileLength());
 
 		packet.setACK(packet.getACK() + 1);
 		ctx.writeAndFlush(packet);

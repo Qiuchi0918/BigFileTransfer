@@ -6,6 +6,8 @@ import com.hhu.util.SessionUtil;
 import io.netty.channel.Channel;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -17,11 +19,19 @@ public class SendFileConsole implements Console {
 		String path = scanner.nextLine();
 
 		File file = new File(path);
-		FilePacket filePacket = new FilePacket(file);
 
-		Map<String, Channel> channelMap = SessionUtil.getNodeIdChannelMap();
-		for (Map.Entry<String, Channel> entry : channelMap.entrySet()) {
-			entry.getValue().writeAndFlush(filePacket);
+		try {
+			FileInputStream inputStream=new FileInputStream(path);
+			FilePacket filePacket = new FilePacket(file.getName(),inputStream.getChannel().size(),file);
+			channel.writeAndFlush(filePacket);
+
+			Map<String, Channel> channelMap = SessionUtil.getNodeIdChannelMap();
+			for (Map.Entry<String, Channel> entry : channelMap.entrySet()) {
+				entry.getValue().writeAndFlush(filePacket);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 	}
 }
