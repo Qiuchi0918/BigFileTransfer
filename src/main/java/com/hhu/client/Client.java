@@ -2,7 +2,7 @@ package com.hhu.client;
 
 
 import com.hhu.client.console.SendFileConsole;
-import com.hhu.client.handler.FileReceiveClientHandler;
+import com.hhu.client.handler.FilePacketReceiveHandler;
 import com.hhu.client.handler.FileSendClientHandler;
 import com.hhu.client.handler.FilePacketClientHandler;
 import com.hhu.client.handler.LoginResponseHandler;
@@ -13,7 +13,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class Client {
 
@@ -36,11 +35,10 @@ public class Client {
 					@Override
 					protected void initChannel(NioSocketChannel channel) throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(new FileReceiveClientHandler());
+						pipeline.addLast(new FilePacketReceiveHandler());
 						pipeline.addLast(new FileSendClientHandler());
 						pipeline.addLast(new DecodeHandler());
 						pipeline.addLast(new EncodeHandler());
-						pipeline.addLast(new ChunkedWriteHandler());
 						pipeline.addLast(new LoginResponseHandler());
 						pipeline.addLast(new FilePacketClientHandler());
 						// pipeline.addLast(new MyClientHandler());

@@ -18,7 +18,7 @@ public class CodecHandler extends MessageToMessageCodec<ByteBuf, Object> {
 			Codec.INSTANCE.encode(byteBuf, (Packet) o);
 			list.add(byteBuf);
 		} else {
-			System.out.println("File ByteBuf need't encode");
+			System.out.println("File ByteBuf needn't encode");
 			// ctx.writeAndFlush(o);
 		}
 	}
@@ -29,7 +29,7 @@ public class CodecHandler extends MessageToMessageCodec<ByteBuf, Object> {
 			System.out.println("decode FilePacket");
 			list.add(Codec.INSTANCE.decode(byteBuf));
 		} else {
-			System.out.println("File ByteBuf need't decode");
+			System.out.println("File ByteBuf needn't decode");
 			// list.add(byteBuf);
 			ctx.fireChannelRead(byteBuf);
 		}

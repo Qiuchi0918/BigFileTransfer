@@ -1,5 +1,6 @@
 package com.hhu.server;
 
+import com.hhu.client.handler.FilePacketReceiveHandler;
 import com.hhu.codec.DecodeHandler;
 import com.hhu.codec.EncodeHandler;
 import com.hhu.server.console.ConsoleManager;
@@ -31,7 +32,7 @@ public class Server {
 					@Override
 					protected void initChannel(NioSocketChannel channel) throws Exception {
 						ChannelPipeline pipeline = channel.pipeline();
-						pipeline.addLast(new FileReceiveServerHandler());
+						pipeline.addLast(new FilePacketReceiveHandler());
 						pipeline.addLast(new FileSendServerHandler());
 						pipeline.addLast(new DecodeHandler());
 						pipeline.addLast(new EncodeHandler());
