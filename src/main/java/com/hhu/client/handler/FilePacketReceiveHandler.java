@@ -7,41 +7,54 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 import java.util.Date;
 
 public class FilePacketReceiveHandler extends ChannelInboundHandlerAdapter {
 
     private static long readLength;
 
-    private int readTime = 0;
+    private long startTime = 0;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         ByteBuf byteBuf = (ByteBuf) msg;
+
         int type = byteBuf.getInt(0);
-        if (type != Codec.TYPE) {
-            System.out.println(readTime++);
-            readLength += byteBuf.readableBytes();
 
-            byte[] bytes = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(bytes);
-
-            FileOutputStream outputStream = ctx.channel().attr(ChannelAttrUtil.outStream).get();
-
-            outputStream.write(bytes);
-            byteBuf.release();
-
-            Long fileLength = ctx.channel().attr(ChannelAttrUtil.fileSize).get();
-
-            if (readLength >= fileLength) {
-                readLength = 0;
-                System.out.println("文件接收完成...");
-                System.out.println(new Date(System.currentTimeMillis()));
-                outputStream.close();
-            }
-        } else {
+        if (type == Codec.TYPE) {
             super.channelRead(ctx, msg);
+            return;
+        }
+
+        Boolean newFile = ctx.channel().attr(ChannelAttrUtil.newFile).get();
+
+        if (newFile != null && newFile) {
+            startTime = System.currentTimeMillis();
+            ctx.channel().attr(ChannelAttrUtil.newFile).set(false);
+        }
+
+        RandomAccessFile outputStream = ctx.channel().attr(ChannelAttrUtil.outStream).get();
+
+        int readableByteCount = byteBuf.readableBytes();
+
+        byteBuf.readBytes(outputStream.getChannel(), readLength, readableByteCount);
+
+        byteBuf.release();
+
+        readLength += readableByteCount;
+
+        Long fileLength = ctx.channel().attr(ChannelAttrUtil.fileSize).get();
+
+        System.out.print("\r" + readLength * 1.0 / fileLength);
+
+        if (readLength >= fileLength) {
+            System.out.println();
+            System.out.println(new Date(startTime));
+            System.out.println(new Date(System.currentTimeMillis()));
+            readLength = 0;
+            outputStream.close();
         }
     }
 }

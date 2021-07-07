@@ -7,19 +7,21 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 import java.util.Date;
 
 public class FilePacketClientHandler extends SimpleChannelInboundHandler<FilePacket> {
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, FilePacket packet) throws Exception {
-		File file = packet.getFile();
-		System.out.println("receive file from server: " + file.getName());
-		System.out.println(new Date(System.currentTimeMillis()));
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, FilePacket packet) throws Exception {
+        File file = packet.getFile();
+        System.out.println("receive file from server: " + file.getName());
+        System.out.println(new Date(System.currentTimeMillis()));
 
-		ctx.channel().attr(ChannelAttrUtil.outStream).set(new FileOutputStream("./client-receive-" + file.getName()));
-		ctx.channel().attr(ChannelAttrUtil.fileSize).set(packet.getFileLength());
+        ctx.channel().attr(ChannelAttrUtil.outStream).set(new RandomAccessFile("./client-receive-" + file.getName(), "rw"));
+        ctx.channel().attr(ChannelAttrUtil.fileSize).set(packet.getFileLength());
+        ctx.channel().attr(ChannelAttrUtil.newFile).set(true);
 
-		packet.setACK(packet.getACK() + 1);
-		ctx.writeAndFlush(packet);
-	}
+        packet.setACK(packet.getACK() + 1);
+        ctx.writeAndFlush(packet);
+    }
 }

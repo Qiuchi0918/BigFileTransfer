@@ -16,10 +16,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class Client {
 
-    	private static final String HOST = System.getProperty("host", "127.0.0.1");
-//    private static final String HOST = "192.168.2.131";
+//    private static final String HOST = System.getProperty("host", "127.0.0.1");
+    private static final String HOST = "10.10.41.233";
 
-    private static final int PORT = Integer.parseInt(System.getProperty("port", "8080"));
+    private static final int PORT = Integer.parseInt(System.getProperty("port", "14433"));
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -34,7 +34,7 @@ public class Client {
                 .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    protected void initChannel(NioSocketChannel channel) throws Exception {
+                    protected void initChannel(NioSocketChannel channel)  {
                         ChannelPipeline pipeline = channel.pipeline();
                         pipeline.addLast(new FilePacketReceiveHandler());
                         pipeline.addLast(new FileSendClientHandler());
@@ -72,5 +72,4 @@ public class Client {
             }
         }).start();
     }
-
 }

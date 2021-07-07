@@ -5,7 +5,6 @@ import com.hhu.protocol.Packet;
 import com.hhu.protocol.request.LoginPacket;
 import com.hhu.protocol.response.LoginResponsePacket;
 import com.hhu.protocol.serilizer.Serilizer;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;

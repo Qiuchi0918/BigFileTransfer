@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class Server {
 
-	private static final int PORT = Integer.parseInt(System.getProperty("port", "8080"));
+	private static final int PORT = Integer.parseInt(System.getProperty("port", "14433"));
 
 	public static void main(String[] args) throws InterruptedException {
 		ServerBootstrap bootstrap = new ServerBootstrap();
@@ -38,7 +38,6 @@ public class Server {
 						pipeline.addLast(new EncodeHandler());
 						pipeline.addLast(new JoinClusterRequestHandler());
 						pipeline.addLast(new FilePacketServerHandler());
-						// pipeline.addLast("handler", new MyServerHandler());
 					}
 				});
 

@@ -4,13 +4,20 @@ import com.hhu.codec.Codec;
 import com.hhu.protocol.FilePacket;
 import com.hhu.protocol.Packet;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.DefaultFileRegion;
+import io.netty.handler.stream.ChunkedNioFile;
+import io.netty.handler.stream.ChunkedNioStream;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class FileSendServerHandler extends ChannelInboundHandlerAdapter {
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf byteBuf = (ByteBuf) msg;
@@ -38,5 +45,4 @@ public class FileSendServerHandler extends ChannelInboundHandlerAdapter {
             }
         });
     }
-
 }
