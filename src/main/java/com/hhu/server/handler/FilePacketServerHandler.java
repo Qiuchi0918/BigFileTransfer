@@ -21,6 +21,7 @@ public class FilePacketServerHandler extends SimpleChannelInboundHandler<FilePac
 
         ctx.channel().attr(ChannelAttrUtil.outStream).set(new RandomAccessFile("./server-receive-" + file.getName(), "rw"));
         ctx.channel().attr(ChannelAttrUtil.fileSize).set(packet.getFileLength());
+        ctx.channel().attr(ChannelAttrUtil.newFile).set(true);
 
         packet.setACK(packet.getACK() + 1);
         ctx.writeAndFlush(packet);
