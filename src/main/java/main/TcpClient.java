@@ -28,13 +28,12 @@ public class TcpClient {
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel channel) {
                         ChannelPipeline pipeline = channel.pipeline();
 
-                        pipeline.addLast(new DefaultEventLoopGroup(), "File Frag Handler", new FilePacketHandler());
+                        pipeline.addLast(new FilePacketHandler());
 
                         pipeline.addLast(new CodecHandler());
 

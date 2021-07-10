@@ -16,18 +16,16 @@ public class Codec {
 
     public static final int TYPE = 0x12345678;
 
-    private final Map<Byte, Class<? extends Packet>> packetTypeMap;
+    private static final Map<Byte, Class<? extends Packet>> packetTypeMap;
 
-    public static Codec INSTANCE = new Codec();
-
-    private Codec() {
+    static  {
         packetTypeMap = new HashMap<>();
         packetTypeMap.put(FILE_PACKET, FileMetaPacket.class);
         packetTypeMap.put(LOGIN_PACKET_REQUEST, LoginRequestPacket.class);
         packetTypeMap.put(LOGIN_PACKET_RESPONSE, LoginResponsePacket.class);
     }
 
-    public void encode(ByteBuf byteBuf, Packet packet) {
+    public static void encode(ByteBuf byteBuf, Packet packet) {
         byte[] bytes = Serializer.Algorithm.FASTJSON.serialize(packet);
         byteBuf.writeInt(TYPE);
         byteBuf.writeByte(packet.getCommand());
@@ -35,7 +33,7 @@ public class Codec {
         byteBuf.writeBytes(bytes);
     }
 
-    public Packet decode(ByteBuf byteBuf) {
+    public static Packet decode(ByteBuf byteBuf) {
         byteBuf.readInt();
         Byte command = byteBuf.readByte();
         int len = byteBuf.readInt();

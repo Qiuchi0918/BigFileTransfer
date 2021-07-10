@@ -8,6 +8,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.io.RandomAccessFile;
 
+
 public class FilePacketHandler extends ChannelInboundHandlerAdapter {
 
     private static long readLength;
@@ -51,7 +52,7 @@ public class FilePacketHandler extends ChannelInboundHandlerAdapter {
 
         Long fileLength = ctx.channel().attr(ChannelAttrUtil.fileSize).get();
 
-        System.out.print("\rpg: " + readLength * 100 / fileLength + "%, ps: " + readableByteCount + "     ");
+        System.out.print("\rpg: " + readLength * 100 / fileLength + "%, ps: " + readableByteCount + "    ");
 
         if (readLength >= fileLength) {
             long secElp = (System.currentTimeMillis() - startTime) / 1000;
