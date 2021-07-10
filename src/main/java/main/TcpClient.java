@@ -34,7 +34,7 @@ public class TcpClient {
                     protected void initChannel(NioSocketChannel channel) {
                         ChannelPipeline pipeline = channel.pipeline();
 
-                        pipeline.addLast(new FilePacketHandler());
+                        pipeline.addLast(new DefaultEventLoopGroup(), "File Frag Handler", new FilePacketHandler());
 
                         pipeline.addLast(new CodecHandler());
 
