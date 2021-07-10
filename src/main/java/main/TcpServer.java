@@ -44,11 +44,11 @@ public class TcpServer {
         ChannelFuture future = bootstrap.bind(PORT).sync();
 
         if (future.isSuccess()) {
-            log.info("Tcp Server Bing To Port {}.", PORT);
+            log.info("Tcp Server Bind To Port {}", PORT);
             Channel channel = future.channel();
             console(channel);
         } else {
-            log.info("Failed To Bind Tcp Server To Port {}.", PORT);
+            log.info("Failed To Bind Tcp Server To Port {}", PORT);
         }
 
         future.channel().closeFuture().sync();

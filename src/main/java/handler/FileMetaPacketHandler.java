@@ -1,9 +1,14 @@
 package handler;
 
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.DefaultFileRegion;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.stream.ChunkedFile;
 import lombok.extern.slf4j.Slf4j;
 import protocol.packet.FileMetaPacket;
 import util.ChannelAttrUtil;
-import io.netty.channel.*;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -30,8 +35,16 @@ public class FileMetaPacketHandler extends SimpleChannelInboundHandler<FileMetaP
         }
     }
 
-    private void writeAndFlushFileRegion(ChannelHandlerContext ctx, FileMetaPacket packet) {
-        DefaultFileRegion fileRegion = new DefaultFileRegion(packet.getFile(), 0, packet.getFileLength());
-        ctx.writeAndFlush(fileRegion).addListener((ChannelFutureListener) future -> log.info("Send Complete"));
+    private void writeAndFlushFileRegion(ChannelHandlerContext ctx, FileMetaPacket packet) throws Exception {
+//        DefaultFileRegion fileRegion = new DefaultFileRegion(packet.getFile(), 0, packet.getFileLength());
+//        ctx.writeAndFlush(fileRegion).addListener((ChannelFutureListener) future -> log.info("Send Complete"));
+
+        ChunkedFile chunkedFile = new ChunkedFile(packet.getFile());
+
+        while (!chunkedFile.isEndOfInput()) {
+            ctx.write(chunkedFile.readChunk(ByteBufAllocator.DEFAULT));
+        }
+
+        ctx.flush();
     }
 }

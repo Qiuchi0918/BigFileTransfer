@@ -53,17 +53,14 @@ public class FilePacketHandler extends ChannelInboundHandlerAdapter {
 
         Long fileLength = ctx.channel().attr(ChannelAttrUtil.fileSize).get();
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("\rpg: ")
-                .append(readLength * 100 / fileLength)
-                .append("%, ps: ")
-                .append(readableByteCount)
-                .append(", pc: ")
-                .append(packetCount)
-                .append("    ");
-
-        System.out.print(builder.toString());
+        String status = "\rpg: " +
+                readLength * 100 / fileLength +
+                "%, ps: " +
+                readableByteCount +
+                ", pc: " +
+                packetCount +
+                "    ";
+        System.out.print(status);
 
         if (readLength >= fileLength) {
             long secElp = (System.currentTimeMillis() - startTime) / 1000;
@@ -71,6 +68,7 @@ public class FilePacketHandler extends ChannelInboundHandlerAdapter {
             log.info("Seconds Elapsed: {}", secElp);
             log.info("Packets Received: {}", packetCount);
             log.info("Average Speed: {}KB/s", readLength / 1024 / (secElp == 0 ? 1 : secElp));
+            log.info("Average Packet Size Per Read: {}", readLength / packetCount);
             outputStream.close();
         }
     }

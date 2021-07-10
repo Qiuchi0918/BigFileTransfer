@@ -17,7 +17,11 @@ public class CodecHandler extends MessageToMessageCodec<ByteBuf, Object> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object o, List<Object> list) {
-        if (o instanceof Packet) {
+
+        if (o instanceof ByteBuf) {
+            ((ByteBuf) o).retain();
+            ctx.writeAndFlush(o);
+        } else if (o instanceof Packet) {
             ByteBuf byteBuf = ctx.channel().alloc().ioBuffer();
             Codec.encode(byteBuf, (Packet) o);
             log.info("Encode Packet");
