@@ -1,6 +1,7 @@
 package handler;
 
 import codec.Codec;
+import lombok.extern.slf4j.Slf4j;
 import util.ChannelAttrUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,7 +9,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.io.RandomAccessFile;
 
-
+@Slf4j
 public class FilePacketHandler extends ChannelInboundHandlerAdapter {
 
     private static long readLength;
@@ -52,13 +53,24 @@ public class FilePacketHandler extends ChannelInboundHandlerAdapter {
 
         Long fileLength = ctx.channel().attr(ChannelAttrUtil.fileSize).get();
 
-        System.out.print("\rpg: " + readLength * 100 / fileLength + "%, ps: " + readableByteCount + "    ");
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("\rpg: ")
+                .append(readLength * 100 / fileLength)
+                .append("%, ps: ")
+                .append(readableByteCount)
+                .append(", pc: ")
+                .append(packetCount)
+                .append("    ");
+
+        System.out.print(builder.toString());
 
         if (readLength >= fileLength) {
             long secElp = (System.currentTimeMillis() - startTime) / 1000;
-            System.out.println("\nSeconds Elapsed: " + secElp);
-            System.out.println("Packets Received: " + packetCount);
-            System.out.println("Average Speed: " + readLength / 1024 / (secElp == 0 ? 1 : secElp) + "KB/s");
+            System.out.println();
+            log.info("Seconds Elapsed: {}", secElp);
+            log.info("Packets Received: {}", packetCount);
+            log.info("Average Speed: {}KB/s", readLength / 1024 / (secElp == 0 ? 1 : secElp));
             outputStream.close();
         }
     }

@@ -1,17 +1,16 @@
 package main;
 
 
-import handler.CodecHandler;
+import handler.*;
 import console.ClientConsole;
-import handler.FileMetaPacketHandler;
-import handler.FilePacketHandler;
-import handler.LoginRequestPacketHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 import protocol.packet.LoginRequestPacket;
 
+@Slf4j
 public class TcpClient {
 
     public static void main(String[] args) throws InterruptedException {
@@ -38,18 +37,19 @@ public class TcpClient {
                         pipeline.addLast(new CodecHandler());
 
                         pipeline.addLast(new FileMetaPacketHandler());
-                        pipeline.addLast(new LoginRequestPacketHandler());
+                        pipeline.addLast(new LoginResponsePacketHandler());
                     }
                 });
 
         ChannelFuture future = bootstrap.connect(HOST, PORT).sync();
+
         if (future.isSuccess()) {
-            System.out.println("连接服务器成功");
+            log.info("Tcp Client Connected To Server At {}:{}.", HOST, PORT);
             Channel channel = future.channel();
             joinCluster(channel);
             console(channel);
         } else {
-            System.out.println("连接服务器失败");
+            log.info("Failed To Connect To Server At {}:{}.", HOST, PORT);
         }
 
         future.channel().closeFuture().sync();

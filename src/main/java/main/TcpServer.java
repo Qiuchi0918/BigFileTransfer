@@ -10,7 +10,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TcpServer {
 
     public static void main(String[] args) throws InterruptedException {
@@ -27,10 +29,10 @@ public class TcpServer {
                 .option(ChannelOption.SO_BACKLOG, 10)
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    protected void initChannel(NioSocketChannel channel)  {
+                    protected void initChannel(NioSocketChannel channel) {
                         ChannelPipeline pipeline = channel.pipeline();
 
-                        pipeline.addLast(new DefaultEventLoopGroup(), "File Frag Handler", new FilePacketHandler());
+                        pipeline.addLast(new FilePacketHandler());
 
                         pipeline.addLast(new CodecHandler());
 
@@ -40,12 +42,13 @@ public class TcpServer {
                 });
 
         ChannelFuture future = bootstrap.bind(PORT).sync();
+
         if (future.isSuccess()) {
-            System.out.println("端口绑定成功");
+            log.info("Tcp Server Bing To Port {}.", PORT);
             Channel channel = future.channel();
             console(channel);
         } else {
-            System.out.println("端口绑定失败");
+            log.info("Failed To Bind Tcp Server To Port {}.", PORT);
         }
 
         future.channel().closeFuture().sync();
